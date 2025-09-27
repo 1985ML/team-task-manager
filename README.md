@@ -33,7 +33,7 @@ A comprehensive team task management application built with Next.js, TypeScript,
 
 1. **Clone the repository**
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/1985ML/team-task-manager.git
 cd team_task_manager
 ```
 
