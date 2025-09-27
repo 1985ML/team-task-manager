@@ -14,7 +14,8 @@ import {
   BarChart3,
   Settings,
   Plus,
-  FolderKanban
+  FolderKanban,
+  Folder
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -40,6 +41,12 @@ export function Sidebar({ className, isOpen = true }: SidebarProps) {
       href: '/dashboard/tasks',
       icon: CheckSquare,
       current: pathname?.startsWith('/dashboard/tasks')
+    },
+    {
+      name: 'Projects',
+      href: '/dashboard/projects',
+      icon: Folder,
+      current: pathname?.startsWith('/dashboard/projects')
     },
     {
       name: 'Kanban Board',
