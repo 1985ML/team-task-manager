@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db'
+import { UserRole } from '@prisma/client'
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,6 +28,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate and set role
+    const validRoles: UserRole[] = ['ADMIN', 'MANAGER', 'MEMBER']
+    const userRole = role?.toUpperCase()
+    const finalRole = validRoles.includes(userRole) ? userRole as UserRole : UserRole.MEMBER
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
@@ -38,7 +44,7 @@ export async function POST(request: NextRequest) {
         firstName: firstName || null,
         lastName: lastName || null,
         name: firstName && lastName ? `${firstName} ${lastName}` : null,
-        role: (role?.toUpperCase() as any) || 'MEMBER',
+        role: finalRole,
       }
     })
 
