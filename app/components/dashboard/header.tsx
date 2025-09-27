@@ -63,13 +63,15 @@ export function DashboardHeader({ onMenuClick, notificationCount = 0 }: Dashboar
 
         <div className="flex items-center space-x-4">
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="h-5 w-5" />
-            {notificationCount > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </Badge>
-            )}
+          <Button variant="ghost" size="sm" className="relative" asChild>
+            <Link href="/dashboard/notifications">
+              <Bell className="h-5 w-5" />
+              {notificationCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  {notificationCount > 99 ? '99+' : notificationCount}
+                </Badge>
+              )}
+            </Link>
           </Button>
 
           {/* User Menu */}

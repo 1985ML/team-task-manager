@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const priority = searchParams.get('priority')
     const teamId = searchParams.get('teamId')
+    const projectId = searchParams.get('projectId')
     const assignedToMe = searchParams.get('assignedToMe') === 'true'
 
     // Build where clause
@@ -47,6 +48,14 @@ export async function GET(request: NextRequest) {
 
     if (teamId && teamId !== 'all') {
       where.teamId = teamId
+    }
+
+    if (projectId && projectId !== 'all') {
+      if (projectId === 'no-project') {
+        where.projectId = null
+      } else {
+        where.projectId = projectId
+      }
     }
 
     const tasks = await prisma.task.findMany({
@@ -75,6 +84,13 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             color: true
+          }
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+            status: true
           }
         },
         comments: {
@@ -125,7 +141,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, status, priority, dueDate, assignedToId, teamId } = body
+    const { title, description, status, priority, dueDate, assignedToId, teamId, projectId } = body
 
     if (!title || !teamId) {
       return NextResponse.json(
@@ -151,6 +167,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // If projectId is provided, verify it belongs to the team
+    if (projectId) {
+      const project = await prisma.project.findFirst({
+        where: {
+          id: projectId,
+          teamId: teamId
+        }
+      })
+
+      if (!project) {
+        return NextResponse.json(
+          { message: 'Project does not belong to this team' },
+          { status: 400 }
+        )
+      }
+    }
+
     // Get the next position for the task
     const lastTask = await prisma.task.findFirst({
       where: { teamId },
@@ -167,6 +200,7 @@ export async function POST(request: NextRequest) {
         dueDate: dueDate ? new Date(dueDate) : null,
         assignedToId: assignedToId || null,
         teamId,
+        projectId: projectId || null,
         createdById: session.user.id,
         position: nextPosition
       },
@@ -190,6 +224,13 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
             color: true
+          }
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+            status: true
           }
         }
       }
