@@ -71,7 +71,10 @@ model User {
   notifications      Notification[] @relation("NotificationTo")
   createdTeams       Team[]       @relation("TeamCreatedBy")
   createdProjects    Project[]    @relation("ProjectCreatedBy")
-  
+  apiKeys            ApiKey[]
+  attachments        Attachment[]
+  savedSearches      SavedSearch[]
+
   @@index([email])
 }
 
@@ -153,7 +156,8 @@ model Task {
   team        Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
   project     Project?    @relation(fields: [projectId], references: [id], onDelete: SetNull)
   comments    Comment[]
-  
+  recurringTaskSeries RecurringTaskSeries?
+
   @@index([teamId])
   @@index([assignedToId])
   @@index([status])
@@ -199,6 +203,81 @@ model Notification {
   @@index([createdAt])
 }
 
+// Phase 2 Models
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  keyHash   String   @unique
+  scopes    String[]
+  active    Boolean  @default(true)
+  lastUsed  DateTime?
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([keyHash])
+  @@index([active])
+}
+
+model Attachment {
+  id               String               @id @default(cuid())
+  entityType       AttachmentEntityType
+  entityId         String
+  filename         String
+  originalName     String
+  fileSize         Int
+  mimeType         String
+  cloudStoragePath String
+  uploadedById     String
+  uploadedAt       DateTime             @default(now())
+
+  // Relations
+  uploadedBy User @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId])
+  @@index([uploadedById])
+}
+
+model RecurringTaskSeries {
+  id          String              @id @default(cuid())
+  taskId      String              @unique
+  frequency   RecurrenceFrequency
+  interval    Int                 @default(1)
+  daysOfWeek  Int[]               // for weekly patterns
+  dayOfMonth  Int?                // for monthly patterns
+  endDate     DateTime?
+  nextDueDate DateTime
+  active      Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+
+  // Relations
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([active])
+  @@index([nextDueDate])
+}
+
+model SavedSearch {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  filters     Json     // Store search filters as JSON
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 // Enums
 enum UserRole {
   ADMIN
@@ -242,4 +321,16 @@ enum ProjectStatus {
   ON_HOLD
   COMPLETED
   CANCELLED
+}
+
+enum AttachmentEntityType {
+  TASK
+  PROJECT
+  COMMENT
+}
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
 }
