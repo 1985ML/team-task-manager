@@ -15,7 +15,7 @@ export default function LandingPage() {
               <h1 className="text-4xl font-bold text-gray-900">Team Task Manager</h1>
             </div>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Streamline your team's workflow with powerful task management and collaboration tools
+              Streamline your team&apos;s workflow with powerful task management and collaboration tools
             </p>
             <div className="mt-8 space-x-4">
               <Link href="/auth/signup">
@@ -94,7 +94,7 @@ export default function LandingPage() {
           <div className="text-center">
             <Card className="border-0 shadow-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
               <CardContent className="p-12">
-                <h2 className="text-3xl font-bold mb-4">Ready to boost your team's productivity?</h2>
+                <h2 className="text-3xl font-bold mb-4">Ready to boost your team&apos;s productivity?</h2>
                 <p className="text-xl opacity-90 mb-8">
                   Join thousands of teams already using our task management solution
                 </p>

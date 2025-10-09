@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -24,7 +24,7 @@ export function ProjectList({ initialProjects = [], teams = [] }: ProjectListPro
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [teamFilter, setTeamFilter] = useState<string>('all')
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     setIsLoading(true)
     try {
       const params = new URLSearchParams()
@@ -41,7 +41,7 @@ export function ProjectList({ initialProjects = [], teams = [] }: ProjectListPro
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [statusFilter, teamFilter])
 
   useEffect(() => {
     let filtered = projects
@@ -70,7 +70,7 @@ export function ProjectList({ initialProjects = [], teams = [] }: ProjectListPro
 
   useEffect(() => {
     fetchProjects()
-  }, [statusFilter, teamFilter])
+  }, [fetchProjects])
 
   const handleProjectUpdate = () => {
     fetchProjects()

@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { X, Upload, File, Image, FileText } from 'lucide-react'
+import { X, Upload, File, Image as ImageIcon, FileText } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 interface FileUploadProps {
@@ -126,7 +126,7 @@ export function FileUpload({
 
   const getFileIcon = (mimeType: string) => {
     if (mimeType.startsWith('image/')) {
-      return <Image className="h-4 w-4" />
+      return <ImageIcon className="h-4 w-4" />
     } else if (mimeType === 'application/pdf' || mimeType.includes('document')) {
       return <FileText className="h-4 w-4" />
     }
