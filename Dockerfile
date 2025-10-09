@@ -7,14 +7,17 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+# Adjust COPY commands to copy from the app subdirectory
+# Adjust COPY commands to copy from the app subdirectory
+COPY app/package.json app/package-lock.json ./
+RUN npm install --legacy-peer-deps --only=production
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Copy the rest of the app source code
+COPY app .
 
 # Generate Prisma client
 RUN npx prisma generate
