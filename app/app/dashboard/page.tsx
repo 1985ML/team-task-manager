@@ -113,7 +113,7 @@ export default async function DashboardPage() {
           Welcome back, {session.user.name?.split(' ')[0] || 'there'}!
         </h1>
         <p className="text-muted-foreground mt-2">
-          Here's what's happening with your tasks and teams today.
+          Here&apos;s what&apos;s happening with your tasks and teams today.
         </p>
       </div>
 

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Download, Trash2, File, Image, FileText, Eye } from 'lucide-react'
+import { Download, Trash2, File, Image as ImageIcon, FileText, Eye } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -34,11 +34,7 @@ export function FileList({ entityType, entityId, onAttachmentDeleted }: FileList
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchAttachments()
-  }, [entityType, entityId])
-
-  const fetchAttachments = async () => {
+  const fetchAttachments = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/v1/attachments?entityType=${entityType}&entityId=${entityId}`
@@ -55,7 +51,11 @@ export function FileList({ entityType, entityId, onAttachmentDeleted }: FileList
     } finally {
       setLoading(false)
     }
-  }
+  }, [entityType, entityId])
+
+  useEffect(() => {
+    fetchAttachments()
+  }, [fetchAttachments])
 
   const handleDelete = async (attachmentId: string) => {
     if (!confirm('Are you sure you want to delete this attachment?')) {
@@ -106,7 +106,7 @@ export function FileList({ entityType, entityId, onAttachmentDeleted }: FileList
 
   const getFileIcon = (mimeType: string) => {
     if (mimeType.startsWith('image/')) {
-      return <Image className="h-5 w-5 text-blue-500" />
+      return <ImageIcon className="h-5 w-5 text-blue-500" />
     } else if (mimeType === 'application/pdf' || mimeType.includes('document')) {
       return <FileText className="h-5 w-5 text-red-500" />
     }
