@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
 import { rateLimit } from './rate-limit'
+import { ApiKeyManager } from './api-keys'
+import { authOptions } from './auth'
 
 export interface AuthContext {
   userId: string

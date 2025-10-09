@@ -16,12 +16,12 @@ export class ApiKeyManager {
   private static readonly KEY_LENGTH = 32
 
   static generateApiKey(): string {
-    const randomBytes = crypto.randomBytes(this.KEY_LENGTH)
-    return this.KEY_PREFIX + randomBytes.toString('hex')
+    const bytes = randomBytes(this.KEY_LENGTH)
+    return this.KEY_PREFIX + bytes.toString('hex')
   }
 
   static hashApiKey(apiKey: string): string {
-    return crypto.createHash('sha256').update(apiKey).digest('hex')
+    return createHash('sha256').update(apiKey).digest('hex')
   }
 
   static async createApiKey(

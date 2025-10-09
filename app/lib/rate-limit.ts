@@ -15,7 +15,7 @@ class InMemoryRateLimiter {
   constructor(windowMs: number = 60000, maxRequests: number = 300) {
     this.windowMs = windowMs
     this.maxRequests = maxRequests
-    
+
     // Clean up expired entries every minute
     setInterval(() => this.cleanup(), 60000)
   }
@@ -73,19 +73,6 @@ export async function rateLimit(identifier: string) {
         retryAfter: Math.ceil((result.resetTime - Date.now()) / 1000)
       },
       {
-        status: 429,
-        headers: {
-          'X-RateLimit-Limit': '300',
-          'X-RateLimit-Remaining': result.remaining.toString(),
-          'X-RateLimit-Reset': result.resetTime.toString(),
-          'Retry-After': Math.ceil((result.resetTime - Date.now()) / 1000).toString()
-        }
-      }
-    )
-  }
-
-  return null // No rate limit hit
-}
         status: 429,
         headers: {
           'X-RateLimit-Limit': '300',

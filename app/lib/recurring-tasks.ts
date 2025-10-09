@@ -151,7 +151,7 @@ export class RecurringTaskService {
           frequency: series.frequency,
           interval: series.interval,
           daysOfWeek: series.daysOfWeek,
-          dayOfMonth: series.dayOfMonth
+          dayOfMonth: series.dayOfMonth ?? undefined
         })
         
         generatedCount++
@@ -314,7 +314,7 @@ export class RecurringTaskService {
       frequency: series.frequency,
       interval: series.interval,
       daysOfWeek: series.daysOfWeek,
-      dayOfMonth: series.dayOfMonth
+      dayOfMonth: series.dayOfMonth ?? undefined
     })
 
     await prisma.recurringTaskSeries.update({
@@ -334,7 +334,7 @@ export class RecurringTaskService {
         frequency: series.frequency,
         interval: series.interval,
         daysOfWeek: series.daysOfWeek,
-        dayOfMonth: series.dayOfMonth,
+        dayOfMonth: series.dayOfMonth ?? undefined,
         endDate: series.endDate || undefined
       })
     }
