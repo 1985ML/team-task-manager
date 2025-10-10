@@ -122,4 +122,77 @@ export class ApiKeyManager {
       expiresAt: key.expiresAt
     }))
   }
+
+  static async getApiKeyById(keyId: string, userId: string): Promise<ApiKeyData | null> {
+    try {
+      const key = await prisma.apiKey.findUnique({
+        where: {
+          id: keyId,
+          userId // Ensure user can only access their own keys
+        }
+      })
+
+      if (!key) {
+        return null
+      }
+
+      return {
+        id: key.id,
+        name: key.name,
+        scopes: key.scopes,
+        active: key.active,
+        lastUsed: key.lastUsed,
+        createdAt: key.createdAt,
+        expiresAt: key.expiresAt
+      }
+    } catch {
+      return null
+    }
+  }
+
+  static async updateApiKey(
+    keyId: string,
+    userId: string,
+    updateData: {
+      name?: string;
+      scopes?: string[];
+      expiresAt?: string;
+    }
+  ): Promise<ApiKeyData | null> {
+    try {
+      const dataToUpdate: any = {}
+
+      if (updateData.name !== undefined) {
+        dataToUpdate.name = updateData.name
+      }
+
+      if (updateData.scopes !== undefined) {
+        dataToUpdate.scopes = updateData.scopes
+      }
+
+      if (updateData.expiresAt !== undefined) {
+        dataToUpdate.expiresAt = updateData.expiresAt ? new Date(updateData.expiresAt) : null
+      }
+
+      const updatedKey = await prisma.apiKey.update({
+        where: {
+          id: keyId,
+          userId // Ensure user can only update their own keys
+        },
+        data: dataToUpdate
+      })
+
+      return {
+        id: updatedKey.id,
+        name: updatedKey.name,
+        scopes: updatedKey.scopes,
+        active: updatedKey.active,
+        lastUsed: updatedKey.lastUsed,
+        createdAt: updatedKey.createdAt,
+        expiresAt: updatedKey.expiresAt
+      }
+    } catch {
+      return null
+    }
+  }
 }
