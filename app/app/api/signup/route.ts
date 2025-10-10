@@ -1,8 +1,13 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db'
 import { UserRole } from '@prisma/client'
+
+// Validate environment variables
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL environment variable is missing')
+  throw new Error('Database configuration error')
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,7 +48,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         firstName: firstName || null,
         lastName: lastName || null,
-        name: firstName && lastName ? `${firstName} ${lastName}` : null,
+        name: firstName and lastName ? `${firstName} ${lastName}` : null,
         role: finalRole,
       }
     })
@@ -52,10 +57,30 @@ export async function POST(request: NextRequest) {
       { message: 'User created successfully', userId: user.id },
       { status: 201 }
     )
-  } catch (error) {
-    console.error('Signup error:', error)
+  } catch (error: any) {
+    // Log basic error info along with runtime hints (useful on Vercel)
+    console.error('Signup error:', {
+      message: error?.message,
+      name: error?.name,
+      // include stack only in non-production logs to avoid leaking internals in some setups
+      stack: process.env.NODE_ENV === 'development' ? error?.stack : undefined,
+      nodeEnv: process.env.NODE_ENV,
+      isVercel: !!process.env.VERCEL,
+    })
+
+    // Log more detailed error information
+    if (error.code) {
+      console.error('Database error code:', error.code)
+    }
+    if (error.meta) {
+      console.error('Database error meta:', error.meta)
+    }
+
     return NextResponse.json(
-      { message: 'Internal server error' },
+      {
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     )
   }
