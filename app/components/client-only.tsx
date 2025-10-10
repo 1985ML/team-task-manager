@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useHasMounted } from '@/hooks/use-has-mounted'
 
 interface ClientOnlyProps {
   children: React.ReactNode
@@ -9,13 +9,9 @@ interface ClientOnlyProps {
 }
 
 export function ClientOnly({ children, fallback }: ClientOnlyProps) {
-  const [mounted, setMounted] = useState(false)
+  const hasMounted = useHasMounted()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
+  if (!hasMounted) {
     return fallback || null
   }
 

@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -46,15 +46,7 @@ export function TaskList() {
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({})
 
-  useEffect(() => {
-    fetchTasks()
-  }, [filters])
-
-  const handleFiltersChange = (newFilters: any) => {
-    setFilters(newFilters)
-  }
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -76,6 +68,14 @@ export function TaskList() {
     } finally {
       setLoading(false)
     }
+  }, [filters])
+
+  useEffect(() => {
+    fetchTasks()
+  }, [fetchTasks])
+
+  const handleFiltersChange = (newFilters: any) => {
+    setFilters(newFilters)
   }
 
   const updateTaskStatus = async (taskId: string, newStatus: string) => {

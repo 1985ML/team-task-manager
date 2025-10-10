@@ -14,21 +14,16 @@ function DashboardContent({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [mounted, setMounted] = useState(false)
   const { data: session, status } = useSession() || {}
   const router = useRouter()
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (mounted && status === 'unauthenticated') {
+    if (status === 'unauthenticated') {
       router.replace('/auth/login')
     }
-  }, [status, router, mounted])
+  }, [status, router])
 
-  if (!mounted || status === 'loading') {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse text-lg text-muted-foreground">Loading dashboard...</div>

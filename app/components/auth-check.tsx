@@ -13,24 +13,17 @@ interface AuthCheckProps {
 export function AuthCheck({ children, requireAuth = false }: AuthCheckProps) {
   const { data: session, status } = useSession() || {}
   const router = useRouter()
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
-
-    if (requireAuth && status === 'unauthenticated') {
+    if (status === 'unauthenticated' && requireAuth) {
       router.replace('/auth/login')
-    } else if (!requireAuth && status === 'authenticated') {
+    }
+    if (status === 'authenticated' && !requireAuth) {
       router.replace('/dashboard')
     }
-  }, [status, router, requireAuth, mounted])
+  }, [status, router, requireAuth])
 
-  // Don't render anything during loading or server-side rendering
-  if (!mounted || status === 'loading') {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="animate-pulse text-lg text-gray-600">Loading...</div>
