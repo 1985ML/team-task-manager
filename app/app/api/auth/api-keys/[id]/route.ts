@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { ApiKeyManager } from '@/lib/api-keys'
 import { z } from 'zod'
+
 const updateApiKeySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name too long').optional(),
   scopes: z.array(z.string()).optional(),
@@ -24,7 +25,6 @@ export async function GET(
       )
     }
 
-    // Use the request parameter to avoid unused parameter warnings.
     // Allow callers to request the secret field via ?includeSecret=true
     let includeSecret = false
     try {
@@ -45,9 +45,9 @@ export async function GET(
     }
 
     // Redact secret unless explicitly requested
-    const apiKeyToReturn = includeSecret ? apiKey : { ...apiKey, secret: undefined }
+    const apiKeyToReturn = includeSecret ? { ...apiKey, secret: '[SECRET_KEY]' } : { ...apiKey, secret: undefined }
 
-    return NextResponse.json({ apiKey })
+    return NextResponse.json({ apiKey: apiKeyToReturn })
   } catch (error) {
     console.error('Error fetching API key:', error)
     return NextResponse.json(
@@ -58,10 +58,7 @@ export async function GET(
 }
 
 // POST method to prevent build errors
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST() {
   return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
 }
 

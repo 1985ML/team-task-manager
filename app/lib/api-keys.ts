@@ -63,7 +63,7 @@ export class ApiKeyManager {
     }
 
     const keyHash = this.hashApiKey(apiKey)
-    
+
     const keyRecord = await prisma.apiKey.findUnique({
       where: { keyHash },
       include: { user: true }
@@ -93,13 +93,18 @@ export class ApiKeyManager {
 
   static async revokeApiKey(keyId: string, userId: string): Promise<boolean> {
     try {
+      // Ensure the key exists and belongs to the user
+      const key = await prisma.apiKey.findFirst({
+        where: { id: keyId, userId }
+      })
+
+      if (!key) return false
+
       await prisma.apiKey.update({
-        where: {
-          id: keyId,
-          userId // Ensure user can only revoke their own keys
-        },
+        where: { id: keyId },
         data: { active: false }
       })
+
       return true
     } catch {
       return false
@@ -125,7 +130,7 @@ export class ApiKeyManager {
 
   static async getApiKeyById(keyId: string, userId: string): Promise<ApiKeyData | null> {
     try {
-      const key = await prisma.apiKey.findUnique({
+      const key = await prisma.apiKey.findFirst({
         where: {
           id: keyId,
           userId // Ensure user can only access their own keys
@@ -160,6 +165,13 @@ export class ApiKeyManager {
     }
   ): Promise<ApiKeyData | null> {
     try {
+      // Verify ownership first
+      const existing = await prisma.apiKey.findFirst({
+        where: { id: keyId, userId }
+      })
+
+      if (!existing) return null
+
       const dataToUpdate: any = {}
 
       if (updateData.name !== undefined) {
@@ -175,10 +187,7 @@ export class ApiKeyManager {
       }
 
       const updatedKey = await prisma.apiKey.update({
-        where: {
-          id: keyId,
-          userId // Ensure user can only update their own keys
-        },
+        where: { id: keyId },
         data: dataToUpdate
       })
 

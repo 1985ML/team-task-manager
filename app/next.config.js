@@ -20,6 +20,10 @@ const nextConfig = {
         source: '/api/:path*',
         destination: '/api/:path*',
       },
+      {
+        source: '/api/auth/api-keys/:id*',
+        destination: '/api/auth/api-keys/:id*',
+      },
     ];
   },
   // Add headers to prevent caching of API routes
