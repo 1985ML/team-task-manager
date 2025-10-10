@@ -14,7 +14,7 @@ const createApiKeySchema = z.object({
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -23,7 +23,7 @@ export async function GET() {
     }
 
     const apiKeys = await ApiKeyManager.getUserApiKeys(session.user.id)
-    
+
     return NextResponse.json({ apiKeys })
   } catch (error) {
     console.error('Error fetching API keys:', error)
@@ -38,7 +38,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const validation = createApiKeySchema.safeParse(body)
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validation.error.errors },
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, scopes, expiresAt } = validation.data
-    
+
     const result = await ApiKeyManager.createApiKey(
       session.user.id,
       name,
@@ -78,3 +78,7 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+// Add runtime configuration to prevent static optimization issues
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
