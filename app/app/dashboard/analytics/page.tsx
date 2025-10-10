@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -67,13 +67,7 @@ export default function AnalyticsPage() {
   const [teamAnalyticsData, setTeamAnalyticsData] = useState<TeamAnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      fetchAnalytics()
-    }
-  }, [session, timeRange, selectedTeam])
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams()
@@ -118,7 +112,13 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [timeRange, selectedTeam])
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetchAnalytics()
+    }
+  }, [session, fetchAnalytics])
 
   if (!session) {
     return (
