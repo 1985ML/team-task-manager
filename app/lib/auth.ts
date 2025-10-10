@@ -14,6 +14,10 @@ if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL environment variable is required')
 }
 
+// Default admin credentials for testing
+const DEFAULT_ADMIN_EMAIL = 'admin@test.com'
+const DEFAULT_ADMIN_PASSWORD = 'admin123'
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -26,6 +30,27 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null
+        }
+
+        // For testing: bypass password check for default admin in development
+        if (process.env.NODE_ENV === 'development' &&
+            credentials.email === DEFAULT_ADMIN_EMAIL &&
+            credentials.password === DEFAULT_ADMIN_PASSWORD) {
+
+          const user = await prisma.user.findUnique({
+            where: {
+              email: credentials.email
+            }
+          })
+
+          if (user) {
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+              role: user.role,
+            }
+          }
         }
 
         const user = await prisma.user.findUnique({

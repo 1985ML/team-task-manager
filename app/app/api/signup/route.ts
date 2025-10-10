@@ -9,10 +9,61 @@ if (!process.env.DATABASE_URL) {
   throw new Error('Database configuration error')
 }
 
+// Default admin credentials for testing
+const DEFAULT_ADMIN_EMAIL = 'admin@test.com'
+const DEFAULT_ADMIN_PASSWORD = 'admin123'
+const DEFAULT_ADMIN_FIRST_NAME = 'Admin'
+const DEFAULT_ADMIN_LAST_NAME = 'User'
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { email, password, firstName, lastName, role } = body
+
+    // Check if we should create default admin
+    if (email === DEFAULT_ADMIN_EMAIL && password === DEFAULT_ADMIN_PASSWORD) {
+      // Check if default admin already exists
+      const existingAdmin = await prisma.user.findUnique({
+        where: { email: DEFAULT_ADMIN_EMAIL }
+      })
+
+      if (existingAdmin) {
+        // Authenticate existing admin
+        return NextResponse.json(
+          {
+            message: 'Admin login successful',
+            userId: existingAdmin.id,
+            email: existingAdmin.email,
+            role: existingAdmin.role
+          },
+          { status: 200 }
+        )
+      }
+
+      // Create default admin user
+      const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12)
+
+      const adminUser = await prisma.user.create({
+        data: {
+          email: DEFAULT_ADMIN_EMAIL,
+          password: hashedPassword,
+          firstName: DEFAULT_ADMIN_FIRST_NAME,
+          lastName: DEFAULT_ADMIN_LAST_NAME,
+          name: `${DEFAULT_ADMIN_FIRST_NAME} ${DEFAULT_ADMIN_LAST_NAME}`,
+          role: UserRole.ADMIN,
+        }
+      })
+
+      return NextResponse.json(
+        {
+          message: 'Default admin user created successfully',
+          userId: adminUser.id,
+          email: adminUser.email,
+          role: adminUser.role
+        },
+        { status: 201 }
+      )
+    }
 
     if (!email || !password) {
       return NextResponse.json(
