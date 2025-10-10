@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         firstName: firstName || null,
         lastName: lastName || null,
-        name: firstName and lastName ? `${firstName} ${lastName}` : null,
+        name: firstName && lastName ? `${firstName} ${lastName}` : null,
         role: finalRole,
       }
     })
