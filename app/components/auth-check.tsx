@@ -11,7 +11,7 @@ interface AuthCheckProps {
 }
 
 export function AuthCheck({ children, requireAuth = false }: AuthCheckProps) {
-  const { data: session, status } = useSession() || {}
+  const { status } = useSession() || {}
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 

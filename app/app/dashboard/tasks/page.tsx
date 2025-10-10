@@ -42,7 +42,7 @@ export default async function TasksPage() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Tasks</h1>
           <p className="text-muted-foreground mt-2">
-            Manage and track your team's tasks efficiently.
+            Manage and track your team&apos;s tasks efficiently.
           </p>
         </div>
         <Button asChild>

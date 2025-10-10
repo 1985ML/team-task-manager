@@ -133,7 +133,7 @@ export function ProjectCard({ project, onUpdate }: ProjectCardProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Project</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{project.name}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{project.name}&quot;? This action cannot be undone.
               All tasks in this project will remain but will no longer be associated with the project.
             </AlertDialogDescription>
           </AlertDialogHeader>

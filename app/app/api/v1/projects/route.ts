@@ -30,7 +30,15 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
 
-    const where: any = {
+    const where: {
+      team: {
+        members: {
+          some: { userId: string }
+        }
+      }
+      status?: 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
+      teamId?: string
+    } = {
       team: {
         members: {
           some: { userId: auth.context!.userId }
@@ -39,7 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (status && status !== 'all') {
-      where.status = status
+      where.status = status as 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
     }
 
     if (teamId && teamId !== 'all') {

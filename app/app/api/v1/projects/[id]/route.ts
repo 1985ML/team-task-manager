@@ -131,7 +131,13 @@ export async function PATCH(
       )
     }
 
-    const updateData: any = {}
+    const updateData: {
+      name?: string
+      description?: string
+      status?: 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
+      startDate?: Date | null
+      dueDate?: Date | null
+    } = {}
     const { name, description, status, startDate, dueDate } = validation.data
 
     if (name !== undefined) updateData.name = name

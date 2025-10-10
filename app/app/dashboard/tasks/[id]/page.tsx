@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, Calendar, User, MessageCircle, Clock, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -71,13 +71,7 @@ export default function TaskDetailPage() {
     dueDate: ''
   })
 
-  useEffect(() => {
-    if (taskId) {
-      fetchTask()
-    }
-  }, [taskId])
-
-  const fetchTask = async () => {
+  const fetchTask = useCallback(async () => {
     try {
       const response = await fetch(`/api/tasks/${taskId}`)
       if (response.ok) {
@@ -146,7 +140,13 @@ export default function TaskDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [taskId, session, router])
+
+  useEffect(() => {
+    if (taskId) {
+      fetchTask()
+    }
+  }, [taskId, fetchTask])
 
   const handleUpdateTask = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -285,7 +285,7 @@ export default function TaskDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Task not found</h2>
-          <p className="text-muted-foreground mb-4">The task you're looking for doesn't exist.</p>
+          <p className="text-muted-foreground mb-4">The task you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/dashboard/tasks">
             <Button>Back to Tasks</Button>
           </Link>

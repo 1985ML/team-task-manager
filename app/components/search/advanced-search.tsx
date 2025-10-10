@@ -52,7 +52,19 @@ interface SavedSearch {
   id: string
   name: string
   description?: string
-  filters: any
+  filters: {
+    query?: string
+    entityTypes?: string[]
+    teamId?: string
+    projectId?: string
+    status?: string
+    priority?: string
+    assignedToId?: string
+    dueDate?: {
+      from?: string
+      to?: string
+    }
+  }
   isDefault: boolean
   createdAt: string
 }

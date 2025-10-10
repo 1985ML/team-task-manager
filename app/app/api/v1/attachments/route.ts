@@ -91,14 +91,14 @@ export async function POST(request: NextRequest) {
       file,
       file.name,
       file.type,
-      entityType as any,
+      entityType as 'TASK' | 'PROJECT' | 'COMMENT',
       entityId
     )
 
     // Save attachment record
     const attachment = await prisma.attachment.create({
       data: {
-        entityType: entityType as any,
+        entityType: entityType as 'TASK' | 'PROJECT' | 'COMMENT',
         entityId,
         filename: uploadResult.filename,
         originalName: uploadResult.originalName,
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
 
     const attachments = await prisma.attachment.findMany({
       where: {
-        entityType: entityType as any,
+        entityType: entityType as 'TASK' | 'PROJECT' | 'COMMENT',
         entityId
       },
       include: {

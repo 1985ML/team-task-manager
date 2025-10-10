@@ -11,7 +11,20 @@ import { toast } from 'react-hot-toast'
 interface FileUploadProps {
   entityType: 'TASK' | 'PROJECT' | 'COMMENT'
   entityId: string
-  onUploadComplete?: (attachment: any) => void
+  onUploadComplete?: (attachment: {
+    id: string
+    filename: string
+    originalName: string
+    fileSize: number
+    mimeType: string
+    downloadUrl: string
+    uploadedBy: {
+      id: string
+      name: string
+      email: string
+    }
+    createdAt: string
+  }) => void
   maxFiles?: number
   disabled?: boolean
 }

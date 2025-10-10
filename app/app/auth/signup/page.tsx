@@ -31,7 +31,7 @@ function SignupForm() {
   const [success, setSuccess] = useState(false)
 
   const router = useRouter()
-  const { data: session, status } = useSession() || {}
+  const { status } = useSession() || {}
 
   useEffect(() => {
     if (status === 'authenticated') {

@@ -138,7 +138,16 @@ export async function PATCH(
     }
 
     // Prepare update data
-    const updateData: any = {}
+    const updateData: {
+      title?: string
+      description?: string
+      status?: 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE'
+      priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+      dueDate?: Date | null
+      assignedToId?: string | null
+      projectId?: string | null
+      completedAt?: Date | null
+    } = {}
     if (title !== undefined) updateData.title = title
     if (description !== undefined) updateData.description = description
     if (status !== undefined) {

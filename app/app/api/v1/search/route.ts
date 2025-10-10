@@ -43,11 +43,30 @@ export async function GET(request: NextRequest) {
     }
 
     const { query, entityTypes, teamId, projectId, limit, offset } = validation.data
-    const results: any[] = []
+    const results: Array<{
+      id: string
+      entityType: string
+      title?: string
+      content?: string
+      relevanceScore: number
+      [key: string]: unknown
+    }> = []
 
     // Search tasks
     if (entityTypes.includes('TASK')) {
-      const taskWhere: any = {
+      const taskWhere: {
+        team: {
+          members: {
+            some: { userId: string }
+          }
+        }
+        OR: Array<{
+          title?: { contains: string; mode: 'insensitive' }
+          description?: { contains: string; mode: 'insensitive' }
+        }>
+        teamId?: string
+        projectId?: string | null
+      } = {
         team: {
           members: {
             some: { userId: auth.context!.userId }
@@ -109,7 +128,18 @@ export async function GET(request: NextRequest) {
 
     // Search projects
     if (entityTypes.includes('PROJECT')) {
-      const projectWhere: any = {
+      const projectWhere: {
+        team: {
+          members: {
+            some: { userId: string }
+          }
+        }
+        OR: Array<{
+          name?: { contains: string; mode: 'insensitive' }
+          description?: { contains: string; mode: 'insensitive' }
+        }>
+        teamId?: string
+      } = {
         team: {
           members: {
             some: { userId: auth.context!.userId }

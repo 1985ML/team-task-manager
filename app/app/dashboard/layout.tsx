@@ -15,7 +15,7 @@ function DashboardContent({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mounted, setMounted] = useState(false)
-  const { data: session, status } = useSession() || {}
+  const { status } = useSession() || {}
   const router = useRouter()
 
   useEffect(() => {

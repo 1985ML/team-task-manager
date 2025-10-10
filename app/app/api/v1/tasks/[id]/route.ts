@@ -13,9 +13,7 @@ const updateTaskSchema = z.object({
   projectId: z.string().optional()
 })
 
-const commentSchema = z.object({
-  content: z.string().min(1, 'Comment content is required')
-})
+
 
 // GET /api/v1/tasks/[id] - Get task details
 export async function GET(
@@ -150,7 +148,16 @@ export async function PATCH(
       )
     }
 
-    const updateData: any = {}
+    const updateData: {
+      title?: string
+      description?: string
+      status?: 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE'
+      priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+      dueDate?: Date | null
+      assignedToId?: string | null
+      projectId?: string | null
+      completedAt?: Date | null
+    } = {}
     const { title, description, status, priority, dueDate, assignedToId, projectId } = validation.data
 
     if (title !== undefined) updateData.title = title

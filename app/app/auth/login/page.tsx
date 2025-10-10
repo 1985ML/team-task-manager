@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
 import { ClientOnly } from '@/components/client-only'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -22,8 +22,7 @@ function LoginForm() {
   const [error, setError] = useState('')
 
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const { data: session, status } = useSession() || {}
+  const { status } = useSession() || {}
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -151,7 +150,7 @@ function LoginForm() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/auth/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
                   Sign up
                 </Link>

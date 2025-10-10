@@ -26,7 +26,17 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
 
     // Build where clause
-    const where: any = {
+    const where: {
+      team: {
+        members: {
+          some: {
+            userId: string
+          }
+        }
+      }
+      teamId?: string
+      status?: 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
+    } = {
       team: {
         members: {
           some: {
@@ -41,7 +51,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (status) {
-      where.status = status
+      where.status = status as 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
     }
 
     const projects = await prisma.project.findMany({

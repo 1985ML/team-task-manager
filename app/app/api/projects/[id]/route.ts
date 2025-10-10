@@ -119,7 +119,13 @@ export async function PATCH(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
-    const updateData: any = {}
+    const updateData: {
+      name?: string
+      description?: string | null
+      status?: 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
+      startDate?: Date | null
+      dueDate?: Date | null
+    } = {}
     if (validatedData.name !== undefined) updateData.name = validatedData.name
     if (validatedData.description !== undefined) updateData.description = validatedData.description || null
     if (validatedData.status !== undefined) updateData.status = validatedData.status

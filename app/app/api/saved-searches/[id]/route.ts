@@ -116,7 +116,12 @@ export async function PATCH(
       })
     }
 
-    const updateData: any = {}
+    const updateData: {
+      name?: string
+      description?: string
+      filters?: object
+      isDefault?: boolean
+    } = {}
     if (name !== undefined) updateData.name = name
     if (description !== undefined) updateData.description = description
     if (filters !== undefined) updateData.filters = filters

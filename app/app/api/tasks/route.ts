@@ -26,7 +26,22 @@ export async function GET(request: NextRequest) {
     const assignedToMe = searchParams.get('assignedToMe') === 'true'
 
     // Build where clause
-    const where: any = {
+    const where: {
+      team: {
+        members: {
+          some: { userId: string }
+        }
+      }
+      status?: 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE'
+      priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+      teamId?: string
+      projectId?: string | null
+      assignedToId?: string
+      OR?: Array<{
+        title?: { contains: string; mode: 'insensitive' }
+        description?: { contains: string; mode: 'insensitive' }
+      }>
+    } = {
       team: {
         members: {
           some: { userId: session.user.id }
@@ -39,11 +54,11 @@ export async function GET(request: NextRequest) {
     }
 
     if (status && status !== 'all') {
-      where.status = status
+      where.status = status as 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE'
     }
 
     if (priority && priority !== 'all') {
-      where.priority = priority
+      where.priority = priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
     }
 
     if (teamId && teamId !== 'all') {

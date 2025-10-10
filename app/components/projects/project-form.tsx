@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -75,7 +75,7 @@ export function ProjectForm({ project, teams, onSuccess }: ProjectFormProps) {
         throw new Error(errorData.error || 'Something went wrong')
       }
 
-      const result = await response.json()
+      await response.json()
       toast.success(project ? 'Project updated successfully!' : 'Project created successfully!')
       
       if (onSuccess) {
@@ -128,7 +128,7 @@ export function ProjectForm({ project, teams, onSuccess }: ProjectFormProps) {
               <Label>Status</Label>
               <Select
                 value={selectedStatus}
-                onValueChange={(value) => setValue('status', value as any)}
+                onValueChange={(value) => setValue('status', value as 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED')}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />

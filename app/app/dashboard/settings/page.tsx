@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Settings, User, Shield, Bell, Palette } from 'lucide-react'
+import { User, Shield, Bell, Palette } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'

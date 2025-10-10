@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -34,16 +34,12 @@ export function FileList({ entityType, entityId, onAttachmentDeleted }: FileList
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchAttachments()
-  }, [entityType, entityId])
-
-  const fetchAttachments = async () => {
+  const fetchAttachments = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/v1/attachments?entityType=${entityType}&entityId=${entityId}`
       )
-      
+
       if (response.ok) {
         const data = await response.json()
         setAttachments(data.attachments)
@@ -55,7 +51,11 @@ export function FileList({ entityType, entityId, onAttachmentDeleted }: FileList
     } finally {
       setLoading(false)
     }
-  }
+  }, [entityType, entityId])
+
+  useEffect(() => {
+    fetchAttachments()
+  }, [fetchAttachments])
 
   const handleDelete = async (attachmentId: string) => {
     if (!confirm('Are you sure you want to delete this attachment?')) {

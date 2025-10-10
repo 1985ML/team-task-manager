@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { BarChart3, TrendingUp, Users, Clock, CheckCircle, AlertTriangle, Download } from 'lucide-react'
+import { BarChart3, TrendingUp, Users, Clock, CheckCircle, AlertTriangle } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
+
 
 interface AnalyticsData {
   overview: {
@@ -62,18 +62,12 @@ interface TeamAnalyticsData {
 export default function AnalyticsPage() {
   const { data: session } = useSession()
   const [timeRange, setTimeRange] = useState('30d')
-  const [selectedTeam, setSelectedTeam] = useState('all')
+  const [selectedTeam] = useState('all')
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
   const [teamAnalyticsData, setTeamAnalyticsData] = useState<TeamAnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      fetchAnalytics()
-    }
-  }, [session, timeRange, selectedTeam])
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams()
@@ -118,7 +112,13 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedTeam, timeRange])
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetchAnalytics()
+    }
+  }, [session, timeRange, selectedTeam, fetchAnalytics])
 
   if (!session) {
     return (
