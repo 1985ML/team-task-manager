@@ -5,6 +5,11 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db'
 
+// Add environment variable validation
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is required')
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -47,6 +52,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
   },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
