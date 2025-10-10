@@ -16,5 +16,6 @@
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
       }
     }
-  ]
+  ],
+  "buildCommand": "prisma generate && next build"
 }
